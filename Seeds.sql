@@ -1,6 +1,6 @@
-INSERT INTO "public"."user" ("num_user", "nom_user") VALUES ('1', 'Nico'),
-('2', 'Martin'),
-('3', 'Fred');
+INSERT INTO "public"."user" ("num_user", "nom_user","pwd_user") VALUES ('1', 'Nico','azerty01'),
+('2', 'Martin','azerty02'),
+('3', 'Fred','azerty03');
 
 INSERT INTO "public"."join_activity_user" ("id", "num_activity", "num_user") VALUES ('1', '1', '1'),
 ('2', '1', '2'),
