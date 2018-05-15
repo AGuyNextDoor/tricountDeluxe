@@ -63,7 +63,7 @@ passport.deserializeUser(function(email, callback) {
   //     callback(err, user);
   // });
   user = {
-    "email":"name",
+    "email":`email`,
     "password":"pass"
   };
   callback(null, user)
@@ -139,7 +139,7 @@ app.get("/logout", function(request, result) {
 app.get("/", function(request, result){
   console.log("last log is :" + request.user.email + " " + request.user + " " + request.user.password);
   // console.log(app.session.passport.user);
-  result.render("homepage");
+  result.render("homepage", { user: request.user.email });
 });
 
 // app.get(
