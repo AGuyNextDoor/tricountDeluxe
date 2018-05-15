@@ -1,10 +1,14 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const express = require("express");
+const PG = require("PG");
 const app = express();
 const nunjucks = require("nunjucks");
 
 const port = process.env.PORT || 3000;
+const client = new PG.Client();
+
+client.connect();
 
 nunjucks.configure("views", {
   autoescape: true,
@@ -34,7 +38,20 @@ app.get("/register", function(request, result) {
 });
 
 
+app.get("/user/:username", function (request, result) {
 
+  client.query(
+    "select * from users where nom_user = $1",
+    [request.params.username],
+    function(error, resultfunc) {
+      if (error) {
+        console.log(error);
+      } else {
+        //console.log(resultfunc.rows);
+        result.json(resultfunc.rows);
+      }
+    });
+});
 
 app.post("/register", function(request, result) {
   const user = request.body;
