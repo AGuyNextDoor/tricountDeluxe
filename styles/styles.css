@@ -1,0 +1,39 @@
+
+
+body{
+  background-image:url("../pictures/back.jpg");
+
+}
+
+.white{
+  color:white;
+}
+
+#container_HP{
+  text-align: center;
+  margin-top:200px;
+}
+
+#container_HP_register{
+  text-align: center;
+  margin-top:80px;
+}
+
+#test_media_query{
+  border-right:solid white 1px;
+}
+
+
+@media screen and (max-width:576px){
+
+
+
+
+
+#test_media_query{
+  border-right:none;
+
+
+}
+
+}
