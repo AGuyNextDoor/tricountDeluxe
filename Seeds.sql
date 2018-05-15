@@ -1,4 +1,4 @@
-INSERT INTO "public"."user" ("num_user", "nom_user","pwd_user") VALUES ('1', 'Nico','azerty01'),
+INSERT INTO "public"."users" ("num_user", "nom_user","pwd_user") VALUES ('1', 'Nico','azerty01'),
 ('2', 'Martin','azerty02'),
 ('3', 'Fred','azerty03');
 
