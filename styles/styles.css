@@ -21,19 +21,25 @@ body{
 
 #test_media_query{
   border-right:solid white 1px;
+  padding-right:30px;
+}
+
+#fb_container{
+
 }
 
 
 @media screen and (max-width:576px){
 
 
-
-
-
 #test_media_query{
   border-right:none;
+  padding-right:none;
+}
 
-
+#fb_container{
+padding-left:none;
+padding-bottom:30px;
 }
 
 }
