@@ -43,8 +43,8 @@ passport.use(
       console.log("third line "+ email +" "+ password);
 
       let user = {
-        "email":`email`,
-        "password":`password`
+        "email":`${email}`,
+        "password":`${password}`
       };
       callback(null,user);
     // });
@@ -63,7 +63,7 @@ passport.deserializeUser(function(email, callback) {
   //     callback(err, user);
   // });
   user = {
-    "email":`email`,
+    "email":email,
     "password":"pass"
   };
   callback(null, user)
@@ -99,7 +99,7 @@ app.get("/register", function(request, result) {
 app.post("/register", passport.authenticate('local', {failureRedirect: '/register' }),function(request, result) {
                                      const user = request.body;
   //console.log(`the entered mail is ${user.username} & the password is ${user.password}`);
-  result.redirect("/");
+  result.redirect("/homepage");
 });
 
 // passport.serializeUser(function(user, callback) {
@@ -112,9 +112,9 @@ app.post("/register", passport.authenticate('local', {failureRedirect: '/registe
 //   // du compte pour l'utiliser sur la page internet.
 // });
 
-// app.get("/login", function(request, result) {
-//   result.render("login");
-// });
+app.get("/login", function(request, result) {
+  result.render("login");
+});
 //
 // app.post("/login", passport.authenticate('local', function(request, result) {
 //   const user = request.body;
@@ -137,10 +137,15 @@ app.get("/logout", function(request, result) {
   result.redirect("/");
 });
 
-app.get("/", function(request, result){
+app.get("/homepage", function(request, result){
   console.log("last log is :" + request.user.email + " " + request.user + " " + request.user.password);
   // console.log(app.session.passport.user);
   result.render("homepage", { user: request.user.email });
+});
+
+app.get("/", function(request, result){
+  // console.log(app.session.passport.user);
+  result.render("homepageNotLogged");
 });
 
 // app.get(
