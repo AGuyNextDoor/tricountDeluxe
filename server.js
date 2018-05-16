@@ -4,6 +4,7 @@ const express = require("express");
 const PG = require("PG");
 const app = express();
 const nunjucks = require("nunjucks");
+const getActivities = require("./handlers/getActivities.js");
 
 const port = process.env.PORT || 3000;
 const client = new PG.Client();
@@ -64,6 +65,7 @@ passport.deserializeUser(function(email, callback) {
   // });
   user = {
     "email":email,
+    "num":"3",
     "password":"pass"
   };
   callback(null, user)
@@ -139,8 +141,10 @@ app.get("/logout", function(request, result) {
 
 app.get("/homepage", function(request, result){
   console.log("last log is :" + request.user.email + " " + request.user + " " + request.user.password);
-  // console.log(app.session.passport.user);
-  result.render("homepage", { user: request.user.email });
+  getActivities(request.user.num).then(value => result.render("homepage", {
+     activities : value.rows,
+     user: request.user
+   }))
 });
 
 app.get("/", function(request, result){

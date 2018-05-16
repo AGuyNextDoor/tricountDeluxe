@@ -2,6 +2,11 @@
 
 {% block content %}
 
-<h1> coucou {{user}} <h1>
-
+<h1> coucou {{user.email}} </h1>
+  <p>Voici la liste de tes activités en cours :</p>
+  <ul>
+  {% for activity in activities %}
+    <li><a href="/activity/{{activity.num_activity}}/expenses">{{activity.name_activity}}</a></li>
+  {% endfor %}
+  </ul>
 {% endblock %}
