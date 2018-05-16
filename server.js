@@ -9,64 +9,53 @@ const port = process.env.PORT || 3000;
 const client = new PG.Client();
 client.connect();
 
-// Initialize Passport and restore authentication state,
-// if any, from the session.
-
-
 passport.use(
   new LocalStrategy(function(email, password, callback) {
-    // Here we need to ask the database if a user match with these email and password.
-    // If there is, we can call the callback function with our user object and no errors:
-    //   `callback(null, userObject)`
-    // Or, if we don't find any matching user, call the callback function with just an error:
-    //   `callback(new Error("no user found"))`
-    // User.findOne({ user: username }, function (err, user) {
-      // if (err) { return callback(err); }
-      // if (!user) { return callback(null, false); }
-      // if (!user.verifyPassword(password)) { return callback(null, false); }
-      client.query(
-        "select * from users where nom_user = $1 and pwd_user = $2",
-        [email,password],
-        function(error, resultfunc) {
-          if (error) {
-            console.log("nope");
-          } else {
-            console.log(resultfunc.rows.length);
-            if(resultfunc.rows.length === 0){
-              console.log("nope nope");
-              return callback(null, false);
-            }
+    client.query(
+      "select * from users where nom_user = $1 and pwd_user = $2",
+      [email, password],
+      function(error, resultfunc) {
+        if (error) {
+          console.log("nope");
+        } else {
+          console.log(resultfunc.rows.length);
+          if(resultfunc.rows.length === 0){
+            callback(null, false);
           }
+          else if((password === resultfunc.rows[0].pwd_user) & ( email === resultfunc.rows[0].nom_user)){
+            console.log("great sucess")
+            let user = {
+              "username":`${email}`,
+              "password":`${password}`
+            };
+            callback(null,user);
+          }
+
         }
-      );
-
-      console.log("third line "+ email +" "+ password);
-
-      let user = {
-        "email":`${email}`,
-        "password":`${password}`
-      };
-      callback(null,user);
-    // });
+      }
+    );
+    console.log("third line "+ email +" "+ password);
   })
 );
 
+
 passport.serializeUser(function(user, callback) {
   //ici on créé le cookie avec les informations : le username;
-  callback(null, user.email);
+  callback(null, user.username);
 });
 
 passport.deserializeUser(function(email, callback) {
-    // Depuis le "username" present dans le cookie, on l'utilise pour recuperer dans la database toutes les informations
-    // du compte pour l'utiliser sur la page internet.
-  //   User.findByEmail(email, function (err, user) {
-  //     callback(err, user);
-  // });
-  user = {
-    "email":email,
-    "password":"pass"
-  };
-  callback(null, user)
+  client.query(
+    "select * from users where nom_user = $1",
+    [email],
+    function(error, resultfunc) {
+      user = {
+        "num": resultfunc.rows[0].num_user,
+        "username": email
+      };
+      callback(null, user)
+    }
+  );
 })
 
 
@@ -92,45 +81,37 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static('public'));
 
-app.get("/register", function(request, result) {
-  result.render("register");
-});
-
-app.post("/register", passport.authenticate('local', {failureRedirect: '/register' }),function(request, result) {
-                                     const user = request.body;
-  //console.log(`the entered mail is ${user.username} & the password is ${user.password}`);
-  result.redirect("/homepage");
-});
-
-// passport.serializeUser(function(user, callback) {
-//   //ici on créé le cookie avec les informations : le username;
-//   return callback(null, user.email);
-// });
-
-// passport.deserializeUser(function(email, callback) {
-//   // Depuis le "username" present dans le cookie, on l'utilise pour recuperer dans la database toutes les informations
-//   // du compte pour l'utiliser sur la page internet.
-// });
-
 app.get("/login", function(request, result) {
   result.render("login");
 });
-//
-// app.post("/login", passport.authenticate('local', function(request, result) {
-//   const user = request.body;
-//   client.query(
-//     "select * from users where nom_user = $1 and pwd_user = $2",
-//     [user.username,user.password],
-//     function(error, resultfunc) {
-//       if (error) {
-//         console.log(error);
-//       } else {
-//         console.log(resultfunc.rows.length);
-//       }
-//     });
-//   //console.log(`the entered mail is ${user.username} & the password is ${user.password}`);
-//   //result.redirect("/");
-// });
+app.post("/login", passport.authenticate('local', {failureRedirect: '/errorLogin' }),function(request, result) {
+  const user = request.body;
+  result.redirect("/homepage");
+});
+
+
+app.get("/register", function(request, result) {
+  result.render("register");
+});
+app.post("/register", function(request, result) {
+  // passport.authenticate('local', {failureRedirect: '/register' })
+  // return callback("Username already exists", false);
+  console.log(request.body);
+  const userInf = request.body;
+  client.query(
+    "select * from users where nom_user = $1",
+    [userInf.username])
+  .then((resultfunc) => {
+    if(resultfunc.rows.length > 0){
+      console.log("error, username already exists");
+      result.redirect("/errorRegister");
+    }
+    else {
+      console.log("registered success");
+      result.redirect("/homepage");
+    }
+  });
+});
 
 app.get("/logout", function(request, result) {
   request.logout();
@@ -138,9 +119,37 @@ app.get("/logout", function(request, result) {
 });
 
 app.get("/homepage", function(request, result){
-  console.log("last log is :" + request.user.email + " " + request.user + " " + request.user.password);
   // console.log(app.session.passport.user);
-  result.render("homepage", { user: request.user.email });
+  if(request.user === undefined){
+    // let text = "You are not yet logged in!"
+    // result.redirect(text,"/NotLogged");
+    result.redirect("/StillNotLogged");
+  }
+  else{
+    result.render("homepage", { userInfo: request.user.username });
+  }
+});
+
+app.get("/StillNotLogged", function(request, result){
+  let text = "You are not yet logged in!";
+  result.render("homepageNotLogged", {error: text})
+});
+
+app.get("/activity/:id/expenses", function(request, result){
+  let res;
+  client.query(
+    "SELECT date_transaction,nom_user, name_transaction, SUM(amount), num_sender FROM transaction_detail INNER JOIN transaction_list ON transaction_detail.num_transaction=transaction_list.num_transaction INNER JOIN users ON users.num_user = num_sender WHERE num_activity=$1 GROUP BY num_sender,name_transaction,nom_user,date_transaction;",
+    [request.params.id],
+    function(error, resultfunc) {
+      if (error) {
+        console.log("nope");
+      } else {
+        console.log("ça marche");
+        res=(resultfunc.rows);
+      }
+    }
+  );
+  result.render("expenses", { Username: request.user.email,id:request.params.id,test:res });
 });
 
 app.get("/", function(request, result){
@@ -148,16 +157,15 @@ app.get("/", function(request, result){
   result.render("homepageNotLogged");
 });
 
-// app.get(
-//   "/profile",
-//   require("connect-ensure-login").ensureLoggedIn("/login"),
-//   function(request, result) {
-//     result.render("profile", {
-//       id: request.user.id,
-//       name: request.user.displayName,
-//       email: request.user.email
-//     });
-// });
+app.get("/errorLogin", function(request, result){
+  let text = "Error with login information entered";
+  result.render("login", {error: text})
+});
+
+app.get("/errorRegister", function(request, result){
+  let text = "Failed with registration ! Username already exists";
+  result.render("register", {error : text});
+});
 
 app.listen(port, function () {
   console.log("Server listening on port:" + port);
