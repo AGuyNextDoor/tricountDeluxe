@@ -4,6 +4,7 @@ const express = require("express");
 const PG = require("PG");
 const app = express();
 const nunjucks = require("nunjucks");
+const getActivities = require("./handlers/getActivities.js");
 
 const port = process.env.PORT || 3000;
 const client = new PG.Client();
@@ -50,12 +51,14 @@ passport.deserializeUser(function(email, callback) {
     [email],
     function(error, resultfunc) {
       user = {
+        "username": email,
         "num": resultfunc.rows[0].num_user,
-        "username": email
+        "password": resultfunc.rows[0].pwd_user
       };
       callback(null, user)
     }
   );
+
 })
 
 
