@@ -40,11 +40,12 @@ passport.use(
         }
       );
 
+
       console.log("third line "+ email +" "+ password);
 
       let user = {
-        "email":`${email}`,
-        "password":`${password}`
+        "email": email,
+        "password": password
       };
       callback(null,user);
     // });
@@ -63,7 +64,7 @@ passport.deserializeUser(function(email, callback) {
   //     callback(err, user);
   // });
   user = {
-    "email":email,
+    "email":`email`,
     "password":"pass"
   };
   callback(null, user)
@@ -99,7 +100,7 @@ app.get("/register", function(request, result) {
 app.post("/register", passport.authenticate('local', {failureRedirect: '/register' }),function(request, result) {
                                      const user = request.body;
   //console.log(`the entered mail is ${user.username} & the password is ${user.password}`);
-  result.redirect("/homepage");
+  result.redirect("/");
 });
 
 // passport.serializeUser(function(user, callback) {
@@ -112,9 +113,9 @@ app.post("/register", passport.authenticate('local', {failureRedirect: '/registe
 //   // du compte pour l'utiliser sur la page internet.
 // });
 
-app.get("/login", function(request, result) {
-  result.render("login");
-});
+// app.get("/login", function(request, result) {
+//   result.render("login");
+// });
 //
 // app.post("/login", passport.authenticate('local', function(request, result) {
 //   const user = request.body;
@@ -137,15 +138,28 @@ app.get("/logout", function(request, result) {
   result.redirect("/");
 });
 
-app.get("/homepage", function(request, result){
-  console.log("last log is :" + request.user.email + " " + request.user + " " + request.user.password);
+app.get("/", function(request, result){
+  //console.log("last log is :" + request.user.email + " " + request.user + " " + request.user.password);
   // console.log(app.session.passport.user);
   result.render("homepage", { user: request.user.email });
 });
 
-app.get("/", function(request, result){
-  // console.log(app.session.passport.user);
-  result.render("homepageNotLogged");
+app.get("/activity/:id/expenses", function(request, result){
+  let res;
+  client.query(
+    "SELECT date_transaction,nom_user, name_transaction, SUM(amount), num_sender FROM transaction_detail INNER JOIN transaction_list ON transaction_detail.num_transaction=transaction_list.num_transaction INNER JOIN users ON users.num_user = num_sender WHERE num_activity=$1 GROUP BY num_sender,name_transaction,nom_user,date_transaction;",
+    [request.params.id],
+    function(error, resultfunc) {
+      if (error) {
+        console.log("nope");
+      } else {
+        console.log("ça marche");
+        console.log(resultfunc.rows);
+        result.render("expenses", { Username: request.user.email,id:request.params.id,test:resultfunc.rows });
+      }
+    }
+  );
+
 });
 
 // app.get(
