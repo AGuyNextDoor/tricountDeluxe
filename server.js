@@ -123,6 +123,10 @@ app.get("/logout", function(request, result) {
 
 app.get("/homepage", function(request, result){
   // console.log(app.session.passport.user);
+  getActivities(request.user.num).then(value => result.render("homepage", {
+     activities : value.rows,
+     user: request.user
+  }))
   if(request.user === undefined){
     // let text = "You are not yet logged in!"
     // result.redirect(text,"/NotLogged");
