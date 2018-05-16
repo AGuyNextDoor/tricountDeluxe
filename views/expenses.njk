@@ -1,0 +1,12 @@
+{% extends "template_logged.njk" %}
+
+{% block content %}
+
+
+  <ul>
+  {% for element in test %}
+    <li>{{element.nom_user}} {{element.name_transaction}} {{element.sum}}</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
