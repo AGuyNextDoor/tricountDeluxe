@@ -159,6 +159,11 @@ app.get("/activity/:id/expenses", function(request, result){
   result.render("expenses", { Username: request.user.email,id:request.params.id,test:res });
 });
 
+app.get("/", function(request, result){
+  // console.log(app.session.passport.user);
+  result.render("homepageNotLogged");
+}
+
 app.get("/activity/:id/expenses", function(request, result){
   let res;
   client.query(
