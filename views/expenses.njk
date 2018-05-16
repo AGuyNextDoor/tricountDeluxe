@@ -1,12 +1,17 @@
 {% extends "template_logged.njk" %}
 
+{% block title %}
+  Expenses
+{% endblock %}
+
 {% block content %}
-
-
   <ul>
-  {% for element in test %}
-    <li>{{element.nom_user}} {{element.name_transaction}} {{element.sum}}</li>
-  {% endfor %}
+    {% for element in test %}
+      <li>{{element.nom_user}} {{element.name_transaction}} {{element.sum}}</li>
+    {% endfor %}
 </ul>
+{% endblock %}
 
+{% block cascadeTitle %}
+  {{user.username}}
 {% endblock %}

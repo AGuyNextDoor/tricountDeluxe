@@ -39,7 +39,6 @@ passport.use(
   })
 );
 
-
 passport.serializeUser(function(user, callback) {
   //ici on créé le cookie avec les informations : le username;
   callback(null, user.username);
@@ -123,7 +122,6 @@ app.get("/logout", function(request, result) {
 
 app.get("/homepage", function(request, result){
   // console.log(app.session.passport.user);
-
   if(request.user === undefined){
     // let text = "You are not yet logged in!"
     // result.redirect(text,"/NotLogged");
@@ -156,7 +154,7 @@ app.get("/activity/:id/expenses", function(request, result){
       if (error) {
         console.log("nope");
       } else {
-        result.render("expenses", {test:resultfunc.rows });
+        result.render("expenses", {user:request.user, test:resultfunc.rows });
       }
     }
   );
