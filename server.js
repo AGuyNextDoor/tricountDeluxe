@@ -162,6 +162,24 @@ app.get("/activity/:id/expenses", function(request, result){
 app.get("/", function(request, result){
   // console.log(app.session.passport.user);
   result.render("homepageNotLogged");
+}
+
+app.get("/activity/:id/expenses", function(request, result){
+  let res;
+  client.query(
+    "SELECT date_transaction,nom_user, name_transaction, SUM(amount), num_sender FROM transaction_detail INNER JOIN transaction_list ON transaction_detail.num_transaction=transaction_list.num_transaction INNER JOIN users ON users.num_user = num_sender WHERE num_activity=$1 GROUP BY num_sender,name_transaction,nom_user,date_transaction;",
+    [request.params.id],
+    function(error, resultfunc) {
+      if (error) {
+        console.log("nope");
+      } else {
+        console.log("ça marche");
+        console.log(resultfunc.rows);
+        result.render("expenses", { Username: request.user.email,id:request.params.id,test:resultfunc.rows });
+      }
+    }
+  );
+
 });
 
 app.get("/errorLogin", function(request, result){
