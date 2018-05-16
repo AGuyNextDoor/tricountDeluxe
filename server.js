@@ -90,6 +90,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static('public'));
 
 app.get("/register", function(request, result) {
   result.render("register");
