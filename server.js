@@ -39,7 +39,6 @@ passport.use(
   })
 );
 
-
 passport.serializeUser(function(user, callback) {
   //ici on créé le cookie avec les informations : le username;
   callback(null, user.username);
@@ -123,7 +122,6 @@ app.get("/logout", function(request, result) {
 
 app.get("/homepage", function(request, result){
   // console.log(app.session.passport.user);
-
   if(request.user === undefined){
     // let text = "You are not yet logged in!"
     // result.redirect(text,"/NotLogged");
@@ -149,13 +147,13 @@ app.get("/", function(request, result){
 
 app.get("/activity/:id/expenses", function(request, result){
   client.query(
-    "SELECT date_transaction,nom_user, name_transaction, SUM(amount), num_sender FROM transaction_detail INNER JOIN transaction_list ON transaction_detail.num_transaction=transaction_list.num_transaction INNER JOIN users ON users.num_user = num_sender WHERE num_activity=$1 GROUP BY num_sender,name_transaction,nom_user,date_transaction;",
+    "SELECT to_char(date_transaction, 'DD-MM-YYYY') as date,nom_user, name_transaction, SUM(amount), num_sender FROM transaction_detail INNER JOIN transaction_list ON transaction_detail.num_transaction=transaction_list.num_transaction INNER JOIN users ON users.num_user = num_sender WHERE num_activity=$1 GROUP BY num_sender,name_transaction,nom_user,date_transaction;",
     [request.params.id],
     function(error, resultfunc) {
       if (error) {
         console.log("nope");
       } else {
-        result.render("expenses", {test:resultfunc.rows });
+        result.render("expenses", {user:request.user, test:resultfunc.rows });
       }
     }
   );
