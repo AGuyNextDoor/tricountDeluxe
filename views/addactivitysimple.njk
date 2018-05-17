@@ -1,0 +1,33 @@
+{% extends "template_logged.njk" %}
+
+{% block title %}
+  Expenses
+{% endblock %}
+
+{% block content %}
+<form class="" action="/addactivity" method="post">
+  <div class="form-group">
+    <label for="name_activity">Activity Name</label>
+    <input type="text" class="form-control" id="name_activity" name="name_activity" aria-describedby="name_desc" placeholder="Enter activity name">
+    <small id="name_desc" class="form-text text-muted"></small>
+
+<label for="username">Add users name</label>
+  <div id="userlist">
+    <div class="form-group">
+      {% for user in users %}
+      <input type="checkbox" id="user" name="users" value="{{user.num_user}}" class="form-control">
+      <label for="user">{{user.nom_user}}</label>
+      {% endfor %}
+    </div>
+     </div>
+
+     <button type="submit" name="button">Validate activity</button>
+     </div>
+</form>
+
+
+{% endblock %}
+
+{% block cascadeTitle %}
+  {{user.username}}
+{% endblock %}

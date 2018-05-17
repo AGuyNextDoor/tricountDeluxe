@@ -7,6 +7,7 @@
 {% block content %}
   <h1> Hello {{user.username}} </h1>
     <p>Voici la liste de tes activités en cours :</p>
+    <a href="/addactivity">Add new activity</a>
     <ul class="list-unstyled">
       {% for activity in activities %}
         <li onclick="location.href='/activity/{{activity.num_activity}}/expenses'">
