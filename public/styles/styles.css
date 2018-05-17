@@ -35,6 +35,32 @@ body{
   color:white;
 }
 
+.loader h1{
+  text-transform: uppercase;
+  font-size: 10em;
+  color: rgba(255,255,255,.1);
+  background-image: url(/pictures/imageBeer.png);
+  background-repeat: repeat-x;
+  -webkit-background-clip: text;
+  animation: animate 50s linear infinite
+}
+
+@keyframes animate
+{
+  0%
+  {
+    background-position: left 0px top 200px;
+  }
+  40%
+  {
+    background-position: left 600px top -350px;
+  }
+  100%
+  {
+    background-position: left 1200px top -100px;
+  }
+}
+
 #container_HP{
   text-align: center;
   margin-top:200px;
