@@ -5,9 +5,12 @@ const PG = require("PG");
 const app = express();
 const nunjucks = require("nunjucks");
 const getActivities = require("./handlers/getActivities.js");
+const getClosedActivities = require("./handlers/getClosedActivities.js");
 
 const port = process.env.PORT || 3000;
 const client = new PG.Client();
+
+
 client.connect();
 
 passport.use(
@@ -153,10 +156,37 @@ app.get("/activity/:id/expenses", function(request, result){
       if (error) {
         console.log("nope");
       } else {
-        result.render("expenses", {user:request.user, test:resultfunc.rows });
+        let myGraph_data=[];
+        let myGraph_labels=[];
+        console.log(resultfunc.rows);
+        console.log("name transaction" + resultfunc.rows.name_transaction);
+        resultfunc.rows.forEach(function buildArray(element){
+          myGraph_data.push(element.sum);
+          myGraph_labels.push(element.name_transaction);
+        });
+
+        result.render("expenses", {user:request.user, test:resultfunc.rows, graph_data:myGraph_data,graph_labels:myGraph_labels});
+
       }
     }
   );
+});
+
+
+app.get("/history", function(request, result){
+  // console.log(app.session.passport.user);
+  if(request.user === undefined){
+    // let text = "You are not yet logged in!"
+    // result.redirect(text,"/NotLogged");
+    result.redirect("/StillNotLogged");
+  }
+  else {
+
+    getClosedActivities().then(value => result.render("history", {
+       activities : value.rows,
+
+    }))
+  }
 });
 
 app.get("/errorLogin", function(request, result){

@@ -1,20 +1,115 @@
 {% extends "template_logged.njk" %}
 
 {% block title %}
-  Expenses
+Expenses
 {% endblock %}
 
 {% block content %}
-  <ul>
-    {% for element in test %}
-      <li>
-        <h6>{{element.date}} - {{element.name_transaction}}</h6>
-        <b>Montant :</b> {{element.sum}} €<br>
-        <b>Payé par :</b> {{element.nom_user}}</li>
-    {% endfor %}
-</ul>
-{% endblock %}
 
-{% block cascadeTitle %}
-  {{user.username}}
+<h1 class="ml-2 mt-4"> Hello {{user.username}} </h1>
+<div class="row d-flex justify-content-between mr-3 pb-3">
+  <h3 class="ml-4">Here are the expenses for your activity<h3>
+
+    <a class="btn btn-primary" href="/accounts" role="button"><i class="fas fa-credit-card"></i> See accounts</a>
+    <a class="btn btn-primary" href="/addexpense" role="button"><i class="fas fa-plus"></i> Add expense</a>
+
+  </div>
+
+  <div id="graph">
+
+    <canvas id="myChart" width="400" height="400"></canvas>
+  </div>
+
+
+
+  <ul class="list-unstyled mt-4">
+    {% for element in test %}
+    <li>
+
+      <div class="row d-flex justify-content-between">
+        <div class="ml-2">
+          <h6>{{element.date}} | {{element.name_transaction}}</h6>
+          <b>Amount:</b> {{element.sum}} €<br>
+          <b>Paid by :</b> {{element.nom_user}}
+
+        </div>
+
+        <div><a class="btn btn-outline-primary ml-auto mr-2" href="#" role="button"><i class="fas fa-pencil-alt"></i></a>
+          <a class="btn btn-outline-primary mr-2" href="#" role="button"><i class="far fa-trash-alt"></i></a>
+        </div>
+
+
+        </li>
+        {% endfor %}
+      </ul>
+
+      {% endblock %}
+
+      {% block cascadeTitle %}
+      {{user.username}}
+      {% endblock %}
+
+      {% block additionalScript %}
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+      <script>
+      let graphDataArray=[{{graph_data}}];
+      var ctx = document.getElementById("myChart");
+      let tabresult = graphDataArray ;
+      let startArray= [];
+
+
+      let labelsArray=[
+        {% for label in graph_labels %}
+          "{{label}}",
+        {% endfor %}
+      ];
+
+
+      let end_array= [];
+      // startArray.forEach(element => end_array.push(element.toString()));
+      //let startArray = [for elements in {{graph_labels}}];
+
+      // for (let i = 0; i < 2; i++) {
+      //   end_array.push(startArray[i]);
+      //   console.log("alzkejlazkejlazkej \n",startArray);
+      // }
+      //let myNewArray =  startArray.map(element => element.toString());
+
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labelsArray,
+          datasets: [{
+            label: 'Expenses repartition for the activity',
+            data: tabresult,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+              'rgba(255,99,132,1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero:true
+              }
+            }]
+          }
+        }
+      });
+      </script>
 {% endblock %}
