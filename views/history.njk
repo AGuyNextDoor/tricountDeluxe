@@ -1,0 +1,36 @@
+{% extends "template_logged.njk" %}
+
+{% block title %}
+HomePage
+{% endblock %}
+
+{% block content %}
+<h1 class="ml-2 mt-4"> Hello {{user.username}} </h1>
+<div class="row d-flex justify-content-between mr-3 pb-3">
+  <h3 class="ml-4">Here are you past activities<h3>
+
+    <a class="btn btn-primary" href="/addactivity" role="button"><i class="fas fa-plus"></i> Add activity</a>
+  </div>
+
+  <ul class="list-unstyled">
+    {% for activity in activities %}
+    <li onclick="location.href='/activity/{{activity.num_activity}}/expenses'">
+
+      <div class="row d-flex justify-content-between">
+
+        <h6 class="ml-3 pt-2">{{activity.date}} | {{activity.name_activity}} | {{activity.tot}} €</h6>
+
+
+
+        <a class="btn btn-outline-primary ml-auto mr-2" href="#" role="button"><i class="fas fa-pencil-alt"></i></a>
+        <a class="btn btn-outline-primary mr-2" href="#" role="button"><i class="far fa-trash-alt"></i></a>
+
+        </div
+      </li>
+      {% endfor %}
+    </ul>
+    {% endblock %}
+
+    {% block cascadeTitle %}
+    {{user.username}}
+    {% endblock %}

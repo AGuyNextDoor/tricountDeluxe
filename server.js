@@ -5,9 +5,12 @@ const PG = require("PG");
 const app = express();
 const nunjucks = require("nunjucks");
 const getActivities = require("./handlers/getActivities.js");
+const getClosedActivities = require("./handlers/getClosedActivities.js");
 
 const port = process.env.PORT || 3000;
 const client = new PG.Client();
+
+
 client.connect();
 
 passport.use(
@@ -183,7 +186,6 @@ app.get("/", function(request, result){
 });
 
 app.get("/activity/:id/expenses", function(request, result){
-  let res;
   client.query(
     "SELECT to_char(date_transaction, 'DD-MM-YYYY') as date,nom_user, name_transaction, SUM(amount), num_sender FROM transaction_detail INNER JOIN transaction_list ON transaction_detail.num_transaction=transaction_list.num_transaction INNER JOIN users ON users.num_user = num_sender WHERE num_activity=$1 GROUP BY num_sender,name_transaction,nom_user,date_transaction;",
     [request.params.id],
@@ -191,10 +193,37 @@ app.get("/activity/:id/expenses", function(request, result){
       if (error) {
         console.log("nope");
       } else {
-        result.render("expenses", {user:request.user, test:resultfunc.rows });
+        let myGraph_data=[];
+        let myGraph_labels=[];
+        console.log(resultfunc.rows);
+        console.log("name transaction" + resultfunc.rows.name_transaction);
+        resultfunc.rows.forEach(function buildArray(element){
+          myGraph_data.push(element.sum);
+          myGraph_labels.push(element.name_transaction);
+        });
+
+        result.render("expenses", {user:request.user, test:resultfunc.rows, graph_data:myGraph_data,graph_labels:myGraph_labels});
+
       }
     }
   );
+});
+
+
+app.get("/history", function(request, result){
+  // console.log(app.session.passport.user);
+  if(request.user === undefined){
+    // let text = "You are not yet logged in!"
+    // result.redirect(text,"/NotLogged");
+    result.redirect("/StillNotLogged");
+  }
+  else {
+
+    getClosedActivities().then(value => result.render("history", {
+       activities : value.rows,
+
+    }))
+  }
 });
 
 app.get("/errorLogin", function(request, result){
