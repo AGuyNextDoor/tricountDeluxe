@@ -7,7 +7,10 @@
 {% block content %}
   <ul>
     {% for element in test %}
-      <li>{{element.nom_user}} {{element.name_transaction}} {{element.sum}}</li>
+      <li>
+        <h6>{{element.date}} - {{element.name_transaction}}</h6>
+        <b>Montant :</b> {{element.sum}} €<br>
+        <b>Payé par :</b> {{element.nom_user}}</li>
     {% endfor %}
 </ul>
 {% endblock %}

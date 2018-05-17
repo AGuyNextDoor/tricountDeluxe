@@ -5,11 +5,14 @@
 {% endblock %}
 
 {% block content %}
-  <h1> coucou {{user.email}} </h1>
+  <h1> Hello {{user.username}} </h1>
     <p>Voici la liste de tes activités en cours :</p>
-    <ul>
+    <ul class="list-unstyled">
       {% for activity in activities %}
-        <li><a href="/activity/{{activity.num_activity}}/expenses">{{activity.name_activity}}</a></li>
+        <li onclick="location.href='/activity/{{activity.num_activity}}/expenses'">
+            <h6>{{activity.date}} - {{activity.name_activity}}</h6>
+            <p>Montant : {{activity.tot}} €</p>
+        </li>
       {% endfor %}
     </ul>
 {% endblock %}
