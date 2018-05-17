@@ -135,6 +135,43 @@ app.get("/homepage", function(request, result){
   }
 });
 
+app.get("/addactivity", function(request, result){
+  result.render("addactivity");
+});
+
+app.get("/addactivitysimple", function(request, result){
+  client.query(
+    "SELECT * FROM users;",
+    [],
+    function(error, resultfunc) {
+      if (error) {
+        console.log("nope");
+      } else {
+        result.render("addactivitysimple", {users:resultfunc.rows });
+      }
+    }
+  );
+});
+
+app.post("/addactivity", function(request, result) {
+  console.log(request.body);
+  const resultquery = client.query(
+    "INSERT INTO activity_list (name_activity) VALUES ($1) returning num_activity",
+    [request.body.name_activity],
+  ).then(resultquery => request.body.users.map(value =>
+            client.query(
+              "INSERT INTO join_activity_user (num_activity,num_user) VALUES ($1,$2)",
+              [resultquery.rows[0].num_activity,value],
+              )
+      )
+  )
+  // console.log(resultquery);
+  // console.log(resultquery.rows[0].num_activity);
+  // //resultquery.then(value => JSON.parse(value)).then(console.log);
+
+});
+
+
 app.get("/StillNotLogged", function(request, result){
   let text = "You are not yet logged in!";
   result.render("homepageNotLogged", {error: text})
