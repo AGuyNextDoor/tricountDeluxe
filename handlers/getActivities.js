@@ -1,4 +1,4 @@
-const PG = require("PG");
+const PG = require("pg");
 const client = new PG.Client();
 client.connect();
 

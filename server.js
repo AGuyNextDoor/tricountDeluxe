@@ -1,7 +1,7 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const express = require("express");
-const PG = require("PG");
+const PG = require("pg");
 const app = express();
 const nunjucks = require("nunjucks");
 const getActivities = require("./handlers/getActivities.js");
@@ -178,7 +178,7 @@ app.post("/register", function(request, result) {
               } else {
                 if(result.rows[0]===undefined){
                   client.query(
-                    "INSERT INTO users (nom_user) VALUES ($1) returning num_user",
+                    "INSERT INTO users (nom_user,pwd_user) VALUES ($1,'azerty') returning num_user",
                     [name])
                     .then(num_user => client.query(
                       "INSERT INTO join_activity_user (num_activity,num_user) VALUES ($1,$2)",
@@ -203,6 +203,63 @@ app.post("/register", function(request, result) {
       .then(result.redirect("HomePage"));
     });
 
+app.get("/activity/:id/addexpense", function(request, result){
+  client.query(
+    "select nom_user, users.num_user from join_activity_user INNER JOIN users on join_activity_user.num_user = users.num_user where num_activity=$1",
+    [request.params.id],
+    function(error, resultfunc) {
+        if (error) {
+          console.log("nope");
+        } else {
+          console.log('test' + resultfunc);
+          result.render("addexpense", {users: resultfunc.rows, activity: request.params.id});
+        };
+      });
+    }
+  );
+
+app.post("/activity/:id/addexpense", function(request, result){
+  console.log(request.params);
+  console.log(request.body);
+  let users=request.body.users;
+  const nbUser = request.body.users.length;
+  let amount = request.body.amount*100;
+  let amountrest = amount;
+  let amounttab = [];
+  var split=Math.round(amount / nbUser);
+  console.log(split);
+
+
+
+    //console.log('rest :' + amountrest);
+    client.query(
+      "INSERT INTO transaction_list (name_transaction, montant_transaction, date_transaction) VALUES ($1,$2,NOW()) returning num_transaction",
+      [request.body.name_expense,request.body.amount],function(error, resultfunc) {
+        console.log(resultfunc);
+        for(let i=0;i<nbUser;i++){
+          if (amountrest - split > 2) {
+            client.query(
+              "INSERT INTO transaction_detail (num_transaction,num_activity,num_sender,num_receiver,part,amount) VALUES ($1,$2,$3,$4,'1',$5)",
+              [resultfunc.rows[0].num_transaction,request.params.id,request.body.sender,users[i],split],
+              );
+            //console.log(users[i],split,request.body.sender,resultfunc.rows[0].lasttrans + 1);
+            amountrest -= split;
+          } else {
+            //console.log(users[i],amountrest,request.body.sender,resultfunc.rows[0].lasttrans + 1);
+            client.query(
+              "INSERT INTO transaction_detail (num_transaction,num_activity,num_sender,num_receiver,part,amount) VALUES ($1,$2,$3,$4,'1',$5)",
+              [resultfunc.rows[0].num_transaction,request.params.id,request.body.sender,users[i],amountrest],
+              );
+          }
+        }
+        result.redirect("/activity/"+request.params.id+"/expenses");
+      }
+
+      )
+  }
+
+  //console.log(split);
+);
 
     app.get("/StillNotLogged", function(request, result){
       let text = "You are not yet logged in!";
@@ -238,9 +295,6 @@ app.post("/register", function(request, result) {
         }
       );
     });
-
-
-
 
 
     app.get("/activity/delete/:id", function(request,result){
