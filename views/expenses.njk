@@ -10,7 +10,7 @@ Expenses
 <div class="row d-flex justify-content-between mr-3 pb-3">
   <h3 class="ml-4">Here are the expenses for your activity<h3>
 
-    <a class="btn btn-primary" href="/accounts" role="button"><i class="fas fa-credit-card"></i> See accounts</a>
+    <a class="btn btn-primary" href="#" onclick="redirect();" role="button"><i class="fas fa-credit-card"></i> See accounts</a>
     <a class="btn btn-primary" href="/addexpense" role="button"><i class="fas fa-plus"></i> Add expense</a>
 
   </div>
@@ -56,6 +56,7 @@ Expenses
       var ctx = document.getElementById("myChart");
       let tabresult = graphDataArray ;
 
+
       let labelsArray=[
         {% for label in graph_labels %}
           "{{label}}",
@@ -100,6 +101,7 @@ Expenses
         }
       });
       </script>
+
       <script>
       function confirmDelete(nom,num){
         let confirmation=confirm("Delete expense "+nom+" ?");
@@ -108,5 +110,12 @@ Expenses
   location.href="/expense/delete/"+num;
   }
   }
+
+
+      <script>
+        function redirect() {
+          location.href='/balance/{{activityId}}'
+        }
+
       </script>
 {% endblock %}

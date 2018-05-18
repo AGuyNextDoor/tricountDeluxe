@@ -1,0 +1,13 @@
+{% extends "template_logged.njk" %}
+
+{% block title %}
+Accounts
+{% endblock %}
+
+{% block content %}
+<br>
+To balance the accounts of this activity : <br>
+  {% for element in variable %}
+    <li> {{element.sender}} needs to give {{element.amount}} to {{element.receiver}} </li>
+  {% endfor %}
+{% endblock %}
