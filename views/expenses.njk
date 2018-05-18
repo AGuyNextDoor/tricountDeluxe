@@ -35,7 +35,7 @@ Expenses
         </div>
 
         <div><a class="btn btn-outline-primary ml-auto mr-2" href="#" role="button"><i class="fas fa-pencil-alt"></i></a>
-          <a class="btn btn-outline-primary mr-2" href="#" role="button"><i class="far fa-trash-alt"></i></a>
+          <a class="btn btn-outline-primary mr-2" href="#" onclick="confirmDelete('{{element.name_transaction}}',{{element.num_transaction}});" role="button"><i class="far fa-trash-alt"></i></a>
         </div>
 
 
@@ -55,8 +55,6 @@ Expenses
       let graphDataArray=[{{graph_data}}];
       var ctx = document.getElementById("myChart");
       let tabresult = graphDataArray ;
-    
-
 
       let labelsArray=[
         {% for label in graph_labels %}
@@ -64,17 +62,7 @@ Expenses
         {% endfor %}
       ];
 
-
       let end_array= [];
-      // startArray.forEach(element => end_array.push(element.toString()));
-      //let startArray = [for elements in {{graph_labels}}];
-
-      // for (let i = 0; i < 2; i++) {
-      //   end_array.push(startArray[i]);
-      //   console.log("alzkejlazkejlazkej \n",startArray);
-      // }
-      //let myNewArray =  startArray.map(element => element.toString());
-
       var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -111,5 +99,14 @@ Expenses
           }
         }
       });
+      </script>
+      <script>
+      function confirmDelete(nom,num){
+        let confirmation=confirm("Delete expense "+nom+" ?");
+        if(confirmation){
+
+  location.href="/expense/delete/"+num;
+  }
+  }
       </script>
 {% endblock %}
