@@ -231,15 +231,16 @@ app.post("/register", function(request, result) {
               myGraph_data.push(element.sum/100);
               myGraph_labels.push(element.name_transaction);
             });
-
-            result.render("expenses", {user:request.user, test:resultfunc.rows, graph_data:myGraph_data,graph_labels:myGraph_labels, activityId: request.params.id});
+let thereIsData = (resultfunc.rows!==undefined);
+let empty = (resultfunc.rows===undefined);
+            result.render("expenses", {user:request.user,thereisData:thereIsData, empty:empty, test:resultfunc.rows, graph_data:myGraph_data,graph_labels:myGraph_labels, activityId: request.params.id});
           }
         }
       );
     });
 
 
-       
+
 
 
     app.get("/activity/delete/:id", function(request,result){
@@ -348,6 +349,3 @@ app.get("/balance/:actId", function(request,result){
     app.listen(port, function () {
       console.log("Server listening on port:" + port);
     });
-
-
-

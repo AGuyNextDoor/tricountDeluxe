@@ -4,22 +4,34 @@
 Expenses
 {% endblock %}
 
+
+
+
+
+
+
+
+
+
+
+
 {% block content %}
 
 <h1 class="ml-2 mt-4"> Hello {{user.username}} </h1>
+
 <div class="row d-flex justify-content-between mr-3 pb-3">
   <h3 class="ml-4">Here are the expenses for your activity<h3>
 
     <a class="btn btn-primary" href="#" onclick="redirect();" role="button"><i class="fas fa-credit-card"></i> See accounts</a>
+
     <a class="btn btn-primary" href="/addexpense" role="button"><i class="fas fa-plus"></i> Add expense</a>
 
   </div>
 
-  <div id="graph">
 
+  <div id="graph">
     <canvas id="myChart" width="400" height="400"></canvas>
   </div>
-
 
 
   <ul class="list-unstyled mt-4">
@@ -43,7 +55,10 @@ Expenses
         {% endfor %}
       </ul>
 
+
+
       {% endblock %}
+
 
       {% block cascadeTitle %}
       {{user.username}}
@@ -110,6 +125,7 @@ Expenses
   location.href="/expense/delete/"+num;
   }
   }
+  </script>
 
 
       <script>
