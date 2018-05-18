@@ -1,5 +1,5 @@
 const PG = require("pg");
-const client = new PG.Client();
+const client = new PG.Client(process.env.DATABASE_URL);
 client.connect();
 
 function getDebts(numActivity) {
