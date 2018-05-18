@@ -1,0 +1,48 @@
+{% extends "template_logged.njk" %}
+
+{% block title %}
+  Expenses
+{% endblock %}
+
+{% block content %}
+<h1 class="ml-2 mt-4"> Add an expense </h1>
+<form class="" action="/activity/{{activity}}/addexpense" method="post">
+  <div class="form-group">
+    <label for="name_expense">Expense name</label>
+    <input type="text" class="form-control" id="name_expense" name="name_expense" aria-describedby="name_desc" placeholder="Enter expense name">
+    <small id="name_desc" class="form-text text-muted"></small>
+
+    <label for="amount">Amount</label>
+    <input type="text" class="form-control" id="amount" name="amount" aria-describedby="amount_desc" placeholder="Enter expense name">
+    <small id="amount_desc" class="form-text text-muted"></small>
+
+  <label for="username">Who paid</label>
+      <div class="form-group">
+        {% for user in users %}
+        <div class="form-check">
+          <input type="radio" id="sender" name="sender" value="{{user.num_user}}" class="form-check-input">
+          <label class="form-check-label" for="sender">{{user.nom_user}}</label>
+        </div>
+        {% endfor %}
+      </div>
+
+<label for="username">Check users</label>
+    <div class="form-group">
+      {% for user in users %}
+      <div class="form-check">
+        <input type="checkbox" id="user" name="users" value="{{user.num_user}}" class="form-check-input" checked>
+        <label class="form-check-label" for="user">{{user.nom_user}}</label>
+      </div>
+      {% endfor %}
+    </div>
+
+     <button type="submit" name="button">Validate activity</button>
+     </div>
+</form>
+
+
+{% endblock %}
+
+{# {% block cascadeTitle %}
+  {{user.username}}
+{% endblock %} #}

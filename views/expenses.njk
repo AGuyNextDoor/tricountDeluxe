@@ -11,7 +11,7 @@ Expenses
   <h3 class="ml-4">Here are the expenses for your activity<h3>
 
     <a class="btn btn-primary" href="/accounts" role="button"><i class="fas fa-credit-card"></i> See accounts</a>
-    <a class="btn btn-primary" href="/addexpense" role="button"><i class="fas fa-plus"></i> Add expense</a>
+    <a class="btn btn-primary" href="/activity/{{num_act}}/addexpense" role="button"><i class="fas fa-plus"></i> Add expense</a>
 
   </div>
 
@@ -55,7 +55,7 @@ Expenses
       let graphDataArray=[{{graph_data}}];
       var ctx = document.getElementById("myChart");
       let tabresult = graphDataArray ;
-    
+
 
 
       let labelsArray=[
