@@ -29,7 +29,7 @@ Expenses
       <div class="row d-flex justify-content-between">
         <div class="ml-2">
           <h6>{{element.date}} | {{element.name_transaction}}</h6>
-          <b>Amount:</b> {{element.sum}} €<br>
+          <b>Amount:</b> {{element.sum/100}} €<br>
           <b>Paid by :</b> {{element.nom_user}}
 
         </div>
@@ -55,7 +55,7 @@ Expenses
       let graphDataArray=[{{graph_data}}];
       var ctx = document.getElementById("myChart");
       let tabresult = graphDataArray ;
-      let startArray= [];
+    
 
 
       let labelsArray=[
