@@ -6,6 +6,7 @@ const app = express();
 const nunjucks = require("nunjucks");
 const getActivities = require("./handlers/getActivities.js");
 const getClosedActivities = require("./handlers/getClosedActivities.js");
+const getActivityBalance = require("./handlers/getActivityBalance.js");
 
 const port = process.env.PORT || 3000;
 const client = new PG.Client();
@@ -225,13 +226,19 @@ app.get("/activity/:id/expenses", function(request, result){
           myGraph_labels.push(element.name_transaction);
         });
 
-        result.render("expenses", {user:request.user, test:resultfunc.rows, graph_data:myGraph_data,graph_labels:myGraph_labels});
+        result.render("expenses", {user:request.user, test:resultfunc.rows, graph_data:myGraph_data,graph_labels:myGraph_labels, activityId: request.params.id});
 
       }
     }
   );
 });
 
+app.get("/balance/:actId", function(request,result){
+  getActivityBalance(request.params.actId).then(response => {
+    console.log("result in get is : ", response);
+    result.render("accounts", {variable: response})
+  });
+});
 
 app.get("/activity/delete/:id", function(request,result){
   client.query(
@@ -299,6 +306,8 @@ app.get("/errorRegister", function(request, result){
   let text = "Failed with registration ! Username already exists";
   result.render("register", {error : text});
 });
+
+
 
 app.listen(port, function () {
   console.log("Server listening on port:" + port);
