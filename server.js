@@ -288,9 +288,9 @@ app.post("/activity/:id/addexpense", function(request, result){
               myGraph_data.push(element.sum/100);
               myGraph_labels.push(element.name_transaction);
             });
-let thereIsData = (resultfunc.rows!==undefined);
-let empty = (resultfunc.rows===undefined);
-            result.render("expenses", {user:request.user,thereisData:thereIsData, empty:empty, test:resultfunc.rows, graph_data:myGraph_data,graph_labels:myGraph_labels, activityId: request.params.id});
+          let thereIsData = (resultfunc.rows!==undefined);
+
+            result.render("expenses", {user:request.user,tid:thereIsData,test:resultfunc.rows, graph_data:myGraph_data,graph_labels:myGraph_labels, activityId: request.params.id});
           }
         }
       );
@@ -341,7 +341,7 @@ app.get("/balance/:actId", function(request,result){
   });
 });
 
-    app.get("/expense/delete/:id", function(request,result){
+    app.get("/expense/delete/:id/:numActivity", function(request,result){
       client.query(
         "DELETE FROM transaction_detail WHERE num_transaction = $1 ;",
         [request.params.id],
@@ -358,7 +358,7 @@ app.get("/balance/:actId", function(request,result){
                   console.warn(error);
                 }else{
 
-                result.redirect("/activity/"+request.params.id+"/expenses");
+                result.redirect("/activity/"+request.params.numActivity+"/expenses");
 
                 }
               }

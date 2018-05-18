@@ -24,15 +24,16 @@ Expenses
 
     <a class="btn btn-primary" href="#" onclick="redirect();" role="button"><i class="fas fa-credit-card"></i> See accounts</a>
 
-     <a class="btn btn-primary" href="/activity/{{activityId}}/addexpense" role="button"><i class="fas fa-plus"></i> Add expense</a>
+    <a class="btn btn-primary" href="/addexpense" role="button"><i class="fas fa-plus"></i> Add expense</a>
 
   </div>
 
+{% if tid %}
 
   <div id="graph">
     <canvas id="myChart" width="400" height="400"></canvas>
   </div>
-
+{% endif %}
 
   <ul class="list-unstyled mt-4">
     {% for element in test %}
@@ -47,93 +48,98 @@ Expenses
         </div>
 
         <div><a class="btn btn-outline-primary ml-auto mr-2" href="#" role="button"><i class="fas fa-pencil-alt"></i></a>
-          <a class="btn btn-outline-primary mr-2" href="#" onclick="confirmDelete('{{element.name_transaction}}',{{element.num_transaction}});" role="button"><i class="far fa-trash-alt"></i></a>
+          <a class="btn btn-outline-primary mr-2" href="#" onclick="confirmDelete('{{element.name_transaction}}',{{element.num_transaction}},{{activityId}});" role="button"><i class="far fa-trash-alt"></i></a>
         </div>
 
 
-        </li>
-        {% endfor %}
-      </ul>
+      </li>
+      {% endfor %}
+    </ul>
 
 
 
-      {% endblock %}
+    {% endblock %}
 
 
-      {% block cascadeTitle %}
-      {{user.username}}
-      {% endblock %}
+    {% block cascadeTitle %}
+    {{user.username}}
+    {% endblock %}
 
-      {% block additionalScript %}
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
-      <script>
-      let graphDataArray=[{{graph_data}}];
-      var ctx = document.getElementById("myChart");
-      let tabresult = graphDataArray ;
+    {% block additionalScript %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script>
+    let graphDataArray=[{{graph_data}}];
+    var ctx = document.getElementById("myChart");
+    let tabresult = graphDataArray ;
 
 
+    let labelsArray=[
+      {% for label in graph_labels %}
+      "{{label}}",
+      {% endfor %}
+    ];
 
-      let labelsArray=[
-        {% for label in graph_labels %}
-          "{{label}}",
-        {% endfor %}
-      ];
-
-      let end_array= [];
-      var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labelsArray,
-          datasets: [{
-            label: 'Expenses repartition for the activity',
-            data: tabresult,
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(153, 102, 255, 0.2)',
-              'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-              'rgba(255,99,132,1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
+    let end_array= [];
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labelsArray,
+        datasets: [{
+          label: 'Expenses repartition for the activity',
+          data: tabresult,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255,99,132,1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero:true
+            }
           }]
-        },
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero:true
-              }
-            }]
-          }
         }
-      });
-      </script>
+      }
+    });
+    </script>
 
-      <script>
-      function confirmDelete(nom,num){
-        let confirmation=confirm("Delete expense "+nom+" ?");
-        if(confirmation){
-
-
-  location.href="/expense/delete/"+num;
-  }
-  }
-  </script>
+    <script>
+    function confirmDelete(nom,num,numActivity){
+      let confirmation=confirm("Delete expense "+nom+" ?");
+      if(confirmation){
 
 
-      <script>
 
-        function redirect() {
-          location.href='/balance/{{activityId}}'
-        }
-      </script>
-{% endblock %}
+      location.href="/expense/delete/"+num+"/"+numActivity;
+
+
+
+
+      }
+    }
+    </script>
+
+
+    <script>
+
+    function redirect() {
+    location.href='/balance/{{activityId}}';
+    }
+
+    </script>
+    {% endblock %}
