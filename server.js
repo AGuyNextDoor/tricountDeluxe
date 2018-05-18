@@ -9,7 +9,7 @@ const getClosedActivities = require("./handlers/getClosedActivities.js");
 const getActivityBalance = require("./handlers/getActivityBalance.js");
 
 const port = process.env.PORT || 3000;
-const client = new PG.Client();
+const client = new PG.Client(process.env.DATABASE_URL);
 
 
 client.connect();
