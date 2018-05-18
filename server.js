@@ -233,7 +233,7 @@ app.post("/register", function(request, result) {
             });
 let thereIsData = (resultfunc.rows!==undefined);
 let empty = (resultfunc.rows===undefined);
-            result.render("expenses", {user:request.user,thereisData:thereIsData, empty:empty, test:resultfunc.rows, graph_data:myGraph_data,graph_labels:myGraph_labels, activityId: request.params.id});
+            result.render("expenses", {user:request.user,tid:thereIsData, empty:empty, test:resultfunc.rows, graph_data:myGraph_data,graph_labels:myGraph_labels, activityId: request.params.id});
           }
         }
       );
