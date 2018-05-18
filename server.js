@@ -178,7 +178,7 @@ app.post("/register", function(request, result) {
               } else {
                 if(result.rows[0]===undefined){
                   client.query(
-                    "INSERT INTO users (nom_user) VALUES ($1) returning num_user",
+                    "INSERT INTO users (nom_user,pwd_user) VALUES ($1,'azerty') returning num_user",
                     [name])
                     .then(num_user => client.query(
                       "INSERT INTO join_activity_user (num_activity,num_user) VALUES ($1,$2)",
@@ -223,10 +223,10 @@ app.post("/activity/:id/addexpense", function(request, result){
   console.log(request.body);
   let users=request.body.users;
   const nbUser = request.body.users.length;
-  let amount = request.body.amount;
+  let amount = request.body.amount*100;
   let amountrest = amount;
   let amounttab = [];
-  var split=Math.round(request.body.amount / nbUser);
+  var split=Math.round(amount / nbUser);
   console.log(split);
 
 
