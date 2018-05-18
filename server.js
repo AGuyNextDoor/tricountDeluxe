@@ -145,7 +145,6 @@ app.post("/register", function(request, result) {
   app.get("/homepage", function(request, result){
     // console.log(app.session.passport.user);
     if(request.user === undefined){
-      // let text = "You are not yet logged in!"
       // result.redirect(text,"/NotLogged");
       result.redirect("/StillNotLogged");
     }
