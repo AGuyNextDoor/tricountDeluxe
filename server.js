@@ -159,19 +159,41 @@ app.get("/addactivitysimple", function(request, result){
 app.post("/addactivity", function(request, result) {
   console.log(request.body);
   const resultquery = client.query(
-    "INSERT INTO activity_list (name_activity) VALUES ($1) returning num_activity",
-    [request.body.name_activity],
-  ).then(resultquery => request.body.users.map(value =>
-            client.query(
-              "INSERT INTO join_activity_user (num_activity,num_user) VALUES ($1,$2)",
-              [resultquery.rows[0].num_activity,value],
-              )
-      )
-  )
-  // console.log(resultquery);
-  // console.log(resultquery.rows[0].num_activity);
-  // //resultquery.then(value => JSON.parse(value)).then(console.log);
+    "INSERT INTO activity_list (name_activity, date_activity) VALUES ($1,NOW()) returning num_activity",
+    [request.body.name_activity])
+    .then(num_act => request.body.users.forEach(
+        function (name) {
+          let act_num=num_act.rows[0].num_activity;
+        return client.query(
+            "select num_user from users where nom_user=$1",
+            [name],function(err,result) {
+              if(err) {
+                console.log(name + 'KO');
+              } else {
+                  if(result.rows[0]===undefined){
+                    client.query(
+                      "INSERT INTO users (nom_user) VALUES ($1) returning num_user",
+                      [name])
+                      .then(num_user => client.query(
+                        "INSERT INTO join_activity_user (num_activity,num_user) VALUES ($1,$2)",
+                        [act_num,num_user.rows[0].num_user],
+                        ));
+                  } else {
 
+                    return client.query(
+                      "INSERT INTO join_activity_user (num_activity,num_user) VALUES ($1,$2)",
+                      [act_num,result.rows[0].num_user],
+                      );
+                  }
+              }
+            }
+          )
+
+        }
+
+      )
+    )
+    .then(result.redirect("HomePage"));
 });
 
 

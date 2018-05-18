@@ -19,7 +19,7 @@
             $("#adduser").click(function(){
               var user=$('#username').val();
                num++;
-               $("#userlist .form-group").append('<input type="checkbox" id="user" name="users" value="'+user+'" class="form-control" checked><label for="user">'+user+'</label>');
+               $("#userlist .form-group").append('<div class="form-check"><input type="checkbox" id="user" name="users" value="'+user+'" class="form-check-input" checked><label class="form-check-label" for="user">'+user+'</label></div>');
                document.getElementById("username").value = "";
             });
         });

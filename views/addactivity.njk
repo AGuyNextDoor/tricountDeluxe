@@ -5,13 +5,14 @@
 {% endblock %}
 
 {% block content %}
+<h1 class="ml-2 mt-4"> Add a new activity </h1>
 <form class="" action="/addactivity" method="post">
   <div class="form-group">
-    <label for="name_activity">Activity Name</label>
+    <label for="name_activity">Enter the activity Name</label>
     <input type="text" class="form-control" id="name_activity" name="name_activity" aria-describedby="name_desc" placeholder="Enter activity name">
     <small id="name_desc" class="form-text text-muted"></small>
 
-<label for="username">Add users name</label>
+<label for="username">Add the list of users</label>
   <input type="text" id="username" class="form-control">
   <button type="button" id="adduser">Add a user</button>
   <div id="userlist">
