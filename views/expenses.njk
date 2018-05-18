@@ -122,6 +122,7 @@ Expenses
         let confirmation=confirm("Delete expense "+nom+" ?");
         if(confirmation){
 
+
   location.href="/expense/delete/"+num;
   }
   }
@@ -129,9 +130,9 @@ Expenses
 
 
       <script>
+
         function redirect() {
           location.href='/balance/{{activityId}}'
         }
-
       </script>
 {% endblock %}
