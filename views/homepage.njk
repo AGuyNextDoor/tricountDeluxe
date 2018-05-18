@@ -15,24 +15,39 @@ HomePage
 
   <ul class="list-unstyled">
     {% for activity in activities %}
-    <li onclick="location.href='/activity/{{activity.num_activity}}/expenses'">
+    <a href='/activity/{{activity.num_activity}}/expenses'><li >
 
       <div class="row d-flex justify-content-between">
 
-        <h6 class="ml-3 pt-2">{{activity.date}} | {{activity.name_activity}} | {{activity.tot}} €</h6>
+        <h6 class="ml-3 pt-2">{{activity.date}} | {{activity.name_activity}} | {{activity.tot/100}} €</h6>
 
 
 
-        <a class="btn btn-outline-primary ml-auto mr-2" href="#" role="button"><i class="fas fa-pencil-alt"></i></a>
-        <a class="btn btn-outline-primary mr-2" href="#" role="button"><i class="far fa-trash-alt"></i></a>
+        <a class="btn btn-outline-primary ml-auto mr-2"  href="#" role="button"><i class="fas fa-pencil-alt"></i></a>
+        <a class="btn btn-outline-primary mr-2" href="#" onclick="confirmDelete({{activity.num_activity}},'{{activity.name_activity}}');" role="button"><i class="far fa-trash-alt"></i></a>
 
-        </div
-      </li>
+      </div>
+    </li></a>
 
       {% endfor %}
     </ul>
+
     {% endblock %}
+
+
 
     {% block cascadeTitle %}
     {{user.username}}
+    {% endblock %}
+
+  {% block additionalScript %}
+    <script>
+    function confirmDelete(num,nom){
+      let confirmation=confirm("Delete activity "+nom+" ?");
+      if(confirmation){
+
+location.href="/activity/delete/"+num;
+}
+}
+    </script>
     {% endblock %}

@@ -106,67 +106,67 @@ app.post("/register", function(request, result) {
   client.query(
     "select * from users where nom_user = $1",
     [userInf.username])
-  .then((resultfunc) => {
-    if(resultfunc.rows.length > 0){
-      console.log("error, username already exists");
-      result.redirect("/errorRegister");
+    .then((resultfunc) => {
+      if(resultfunc.rows.length > 0){
+        console.log("error, username already exists");
+         result.redirect("/errorRegister");
+      }
+      else {
+        console.log(request.body);
+        const resultquery = client.query(
+          "INSERT INTO users (nom_user,pwd_user) VALUES ($1,$2)",
+          [userInf.username,userInf.password],
+          function(error,resultbla){
+            if(error){
+              console.warn(error);
+            }else{
+              console.log("registered success");
+            //  request.logIn(userInf, passport.serializeUser);
+              result.redirect("/login");
+            }
+          }
+        );
+      }
+    });
+  });
+
+  app.get("/logout", function(request, result) {
+    request.logout();
+    result.redirect("/");
+  });
+
+  app.get("/homepage", function(request, result){
+    // console.log(app.session.passport.user);
+    if(request.user === undefined){
+      // let text = "You are not yet logged in!"
+      // result.redirect(text,"/NotLogged");
+      result.redirect("/StillNotLogged");
     }
     else {
-      console.log("registered success");
-      result.redirect("/homepage");
+      getActivities(request.user.num).then(value => result.render("homepage", {
+        activities : value.rows,
+        user: request.user
+      }))
     }
   });
-});
 
-app.get("/logout", function(request, result) {
-  request.logout();
-  result.redirect("/");
-});
+  app.get("/addactivity", function(request, result){
+    result.render("addactivity");
+  });
 
-app.get("/homepage", function(request, result){
-  // console.log(app.session.passport.user);
-  if(request.user === undefined){
-    // let text = "You are not yet logged in!"
-    // result.redirect(text,"/NotLogged");
-    result.redirect("/StillNotLogged");
-  }
-  else {
-    getActivities(request.user.num).then(value => result.render("homepage", {
-       activities : value.rows,
-       user: request.user
-    }))
-  }
-});
+  
 
-app.get("/addactivity", function(request, result){
-  result.render("addactivity");
-});
-
-app.get("/addactivitysimple", function(request, result){
-  client.query(
-    "SELECT * FROM users;",
-    [],
-    function(error, resultfunc) {
-      if (error) {
-        console.log("nope");
-      } else {
-        result.render("addactivitysimple", {users:resultfunc.rows });
-      }
-    }
-  );
-});
-
-app.post("/addactivity", function(request, result) {
-  console.log(request.body);
-  const resultquery = client.query(
-    "INSERT INTO activity_list (name_activity) VALUES ($1) returning num_activity",
-    [request.body.name_activity],
-  ).then(resultquery => request.body.users.map(value =>
-            client.query(
-              "INSERT INTO join_activity_user (num_activity,num_user) VALUES ($1,$2)",
-              [resultquery.rows[0].num_activity,value],
-              )
+  app.post("/addactivity", function(request, result) {
+    console.log(request.body);
+    const resultquery = client.query(
+      "INSERT INTO activity_list (name_activity) VALUES ($1) returning num_activity",
+      [request.body.name_activity],
+    ).then(resultquery => request.body.users.map(value =>
+      client.query(
+        "INSERT INTO join_activity_user (num_activity,num_user) VALUES ($1,$2)",
+        [resultquery.rows[0].num_activity,value],
       )
+    )
   )
   // console.log(resultquery);
   // console.log(resultquery.rows[0].num_activity);
@@ -197,8 +197,9 @@ app.get("/activity/:id/expenses", function(request, result){
         let myGraph_labels=[];
         console.log(resultfunc.rows);
         console.log("name transaction" + resultfunc.rows.name_transaction);
+
         resultfunc.rows.forEach(function buildArray(element){
-          myGraph_data.push(element.sum);
+          myGraph_data.push(element.sum/100);
           myGraph_labels.push(element.name_transaction);
         });
 
@@ -210,6 +211,46 @@ app.get("/activity/:id/expenses", function(request, result){
 });
 
 
+app.get("/activity/delete/:id", function(request,result){
+  client.query(
+    "DELETE FROM activity_list WHERE num_activity = $1 ;",
+    [request.params.id],
+    function(error,resultfunc){
+      if (error) {
+        console.warn(error);
+      } else {
+
+        client.query(
+          "DELETE FROM join_activity_user WHERE num_activity = $1 ;",
+          [request.params.id],
+          function(error,resultfunc){
+            if(error){
+              console.warn(error);
+            }else{
+
+              client.query(
+                "DELETE FROM transaction_detail WHERE num_activity = $1 ;",
+                [request.params.id],
+                function(error,resultfunc){
+                  if(error){
+                    console.warn(error);
+                  }else{
+                    result.redirect("/homepage");
+
+                  }
+                }
+              );
+            }
+          }
+        );
+      }
+    }
+  );
+});
+
+
+
+
 app.get("/history", function(request, result){
   // console.log(app.session.passport.user);
   if(request.user === undefined){
@@ -219,12 +260,13 @@ app.get("/history", function(request, result){
   }
   else {
 
-    getClosedActivities().then(value => result.render("history", {
-       activities : value.rows,
+    getClosedActivities(request.user.num).then(value => result.render("history", {
+      activities : value.rows,
 
     }))
   }
 });
+
 
 app.get("/errorLogin", function(request, result){
   let text = "Error with login information entered";
