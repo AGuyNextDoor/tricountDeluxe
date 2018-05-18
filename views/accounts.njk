@@ -1,0 +1,16 @@
+{% extends "template_logged.njk" %}
+
+{% block title %}
+Accounts
+{% endblock %}
+
+{% block content %}
+<h1 class="ml-2 mt-4"> Hello {{user.username}} </h1>
+
+<h3 class="ml-4">To balance the accounts of this activity : </h3>
+<ul class="list-unstyled mt-4">
+  {% for element in variable %}
+    <li> {{element.sender}} needs to give <span style="background-color:#ef8800;color:white;" class="pr-2 pl-2 pt-1 pb-1"><b>{{element.amount/100}} €</b></span> to {{element.receiver}} </li>
+  {% endfor %}
+</ul>
+{% endblock %}

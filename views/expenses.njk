@@ -4,22 +4,34 @@
 Expenses
 {% endblock %}
 
+
+
+
+
+
+
+
+
+
+
+
 {% block content %}
 
 <h1 class="ml-2 mt-4"> Hello {{user.username}} </h1>
+
 <div class="row d-flex justify-content-between mr-3 pb-3">
   <h3 class="ml-4">Here are the expenses for your activity<h3>
 
-    <a class="btn btn-primary" href="/accounts" role="button"><i class="fas fa-credit-card"></i> See accounts</a>
-    <a class="btn btn-primary" href="/activity/{{num_act}}/addexpense" role="button"><i class="fas fa-plus"></i> Add expense</a>
+    <a class="btn btn-primary" href="#" onclick="redirect();" role="button"><i class="fas fa-credit-card"></i> See accounts</a>
+
+     <a class="btn btn-primary" href="/activity/{{activityId}}/addexpense" role="button"><i class="fas fa-plus"></i> Add expense</a>
 
   </div>
+
 
   <div id="graph">
-
     <canvas id="myChart" width="400" height="400"></canvas>
   </div>
-
 
 
   <ul class="list-unstyled mt-4">
@@ -35,7 +47,7 @@ Expenses
         </div>
 
         <div><a class="btn btn-outline-primary ml-auto mr-2" href="#" role="button"><i class="fas fa-pencil-alt"></i></a>
-          <a class="btn btn-outline-primary mr-2" href="#" role="button"><i class="far fa-trash-alt"></i></a>
+          <a class="btn btn-outline-primary mr-2" href="#" onclick="confirmDelete('{{element.name_transaction}}',{{element.num_transaction}});" role="button"><i class="far fa-trash-alt"></i></a>
         </div>
 
 
@@ -43,7 +55,10 @@ Expenses
         {% endfor %}
       </ul>
 
+
+
       {% endblock %}
+
 
       {% block cascadeTitle %}
       {{user.username}}
@@ -64,17 +79,7 @@ Expenses
         {% endfor %}
       ];
 
-
       let end_array= [];
-      // startArray.forEach(element => end_array.push(element.toString()));
-      //let startArray = [for elements in {{graph_labels}}];
-
-      // for (let i = 0; i < 2; i++) {
-      //   end_array.push(startArray[i]);
-      //   console.log("alzkejlazkejlazkej \n",startArray);
-      // }
-      //let myNewArray =  startArray.map(element => element.toString());
-
       var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -111,5 +116,24 @@ Expenses
           }
         }
       });
+      </script>
+
+      <script>
+      function confirmDelete(nom,num){
+        let confirmation=confirm("Delete expense "+nom+" ?");
+        if(confirmation){
+
+
+  location.href="/expense/delete/"+num;
+  }
+  }
+  </script>
+
+
+      <script>
+
+        function redirect() {
+          location.href='/balance/{{activityId}}'
+        }
       </script>
 {% endblock %}

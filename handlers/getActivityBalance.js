@@ -22,11 +22,12 @@ function getUsers(numActivity){
 }
 
 function getActivityBalance(activityNum){
-  Promise.all([getDebts(activityNum), getAdvances(activityNum), getUsers(activityNum)]).then(result => {
+  return Promise.all([getDebts(activityNum), getAdvances(activityNum), getUsers(activityNum)])
+    .then(result => {
       let balance = [];
-      console.log("getDebts : ", result[0], "\n");
-      console.log("getAdvances : ", result[1], "\n");
-      console.log("getUsers : ", result[2], "\n");
+      // console.log("getDebts : ", result[0], "\n");
+      // console.log("getAdvances : ", result[1], "\n");
+      // console.log("getUsers : ", result[2], "\n");
       result[2].forEach(element => balance.push(
         {
           num: element.num_user,
@@ -48,17 +49,17 @@ function getActivityBalance(activityNum){
           }
         }
       }
-      console.log("balance is : ",balance);
+      // console.log("balance is : ",balance);
       return balance;
     }
   )
   .then(result => {
-    console.log("result is : ", result);
+    // console.log("result is : ", result);
     let finalResult = [];
     let balance = [];
     for (let i = 0; i < result.length; i++) {
       balance.push({num: result[i].num, account: result[i].balance});
-      console.log(`the current balance for ${balance[i].num} is ${balance[i].account}$\n`);
+      // console.log(`the current balance for ${balance[i].num} is ${balance[i].account}$\n`);
     }
 
     for (let i = 0; i < balance.length; i++) {
@@ -92,7 +93,7 @@ function getActivityBalance(activityNum){
             "amount": -min,
             "receiver": result[indexMin].nom
           });
-          console.log(`${indexNumMax} gives ${min}$ to ${indexNumMin} \n${balance[indexMax].num} still owes ${balance[indexMax].account}$\n`);
+          // console.log(`${indexNumMax} gives ${min}$ to ${indexNumMin} \n${balance[indexMax].num} still owes ${balance[indexMax].account}$\n`);
         }
         else if(max<(min*(-1))){
           balance[indexMin].account += max;
@@ -102,7 +103,7 @@ function getActivityBalance(activityNum){
             "amount": -min,
             "receiver": result[indexMin].nom
           });
-          console.log(`Min: ${indexNumMax} receive ${max}$ from ${indexNumMin} \n${balance[indexMin].num} still needs ${balance[indexMin].account}$\n`);
+          // console.log(`Min: ${indexNumMax} receive ${max}$ from ${indexNumMin} \n${balance[indexMin].num} still needs ${balance[indexMin].account}$\n`);
         }
         else{
           balance[indexMax].account = 0;
@@ -112,18 +113,25 @@ function getActivityBalance(activityNum){
             "amount": -min,
             "receiver": result[indexMin].nom
           });
-          console.log(`Equality : ${indexNumMax} gives ${max}$ to ${indexNumMin} \n${balance[indexMin].num} and ${balance[indexMax].num} now are clean\n`);
+          // console.log(`Equality : ${indexNumMax} gives ${max}$ to ${indexNumMin} \n${balance[indexMin].num} and ${balance[indexMax].num} now are clean\n`);
         }
       }
     }
-    console.log("tadaaa",finalResult);
-
-    console.log("final result is: ");
-    for (let i = 0; i < balance.length; i++) {
-      console.log(balance[i].num, " has ", balance[i].account,"$");
-    }
+    // console.log("tadaaa",finalResult);
+    // console.log("final result is: ");
+    // for (let i = 0; i < balance.length; i++) {
+    //   console.log(balance[i].num, " has ", balance[i].account,"$");
+    // }
+    console.log("result in handler final is : ", finalResult);
     return finalResult;
   })
+  //
+  // .then(result => {
+  //   console.log("rresult is : ",result);
+  //   return result;
+  // });
 }
 
+getActivityBalance(1).then(result => console.log("finaaaaaaal : ", result));
+// .then(result => console.log("result in handler is : ", result))
 module.exports = getActivityBalance;
